@@ -1,5 +1,6 @@
 from functools import reduce
 from datetime import datetime, timedelta
+import numpy as np
 import re
 
 with open('input.txt') as f:
@@ -28,17 +29,11 @@ for line in content:
 	match = re.match('\[[0-9\-]+ [0-9:]+\] Guard #([0-9]+) begins shift', line, re.I)
 	
 	if match:
-		# add awake time for previous guard
-		if current_guard and previous_time:
-			existing_time_logs = guard_sleep_schedule.get(current_guard, [])
-			one_minute_before = minute_earlier(current_timestamp)
-			previous_guard_range = (previous_time, one_minute_before)
-			guard_sleep_schedule[current_guard] = existing_time_logs + [previous_guard_range]
 			
 		#set the new current guard
 		current_guard = match.groups()[0]
 		
-	elif 'falls' in line:
+	elif 'wakes' in line:
 			# presume guard has been awake since the last time stamp, record segment
 			existing_time_logs = guard_sleep_schedule.get(current_guard, [])
 			one_minute_before = minute_earlier(current_timestamp)
@@ -49,5 +44,19 @@ for line in content:
 			
 guards_to_time_awake = { k: time_awake_from_timestamp_tuples(v) for k, v in guard_sleep_schedule.items() }
 
-guard = max(guards_to_time_awake, key=guards_to_time_awake.get)
-print(guards_to_time_awake[guard])
+most_asleep_guard_id = max(guards_to_time_awake, key=guards_to_time_awake.get)
+print("Guard id:{guard}".format(guard=most_asleep_guard_id))
+print("Time awake:{asleep}".format(asleep=most_asleep_guard_id))
+times_asleep = guard_sleep_schedule[most_asleep_guard_id]
+
+times = np.zeros(60)
+print("Times")
+for time in times_asleep:
+	earlier = time[0].minute
+	later = time[1].minute
+	times[earlier:later] += np.ones(later - earlier)
+
+for i, time in np.ndenumerate(times):
+	print('{i}: {time}'.format(i=i, time =time))
+
+
