@@ -1,3 +1,5 @@
+import re
+from string import ascii_lowercase
 
 with open('input.txt') as f:
 	content = f.readlines()[0]
@@ -23,9 +25,27 @@ def strip_reacting_chars(index, string):
 	else:
 		return (string, index + 1)
 
-stripped, index = strip_reacting_chars(0, content)
-while index is not None:
-	stripped, index = strip_reacting_chars(index, stripped)
+def react_text(text):
+	stripped, index = strip_reacting_chars(0, text)
+	while index is not None:
+		stripped, index = strip_reacting_chars(index, stripped)
+	return stripped
+	
+shortest_length = None
+for letter in ascii_lowercase:
+	regex = '{lower}|{upper}'.format(lower=letter, upper=letter.upper())
+	stripped = re.sub(regex, "", content)
+	
+	reacted = react_text(stripped)
+	length = len(reacted)
+	
+	if shortest_length is not None:
+		if length < shortest_length:
+			shortest_length = length
+	else:
+		shortest_length = length
 
-print(stripped)
-print("number of characters:{count}".format(count=len(stripped)))
+print(shortest_length)			
+	
+	
+
