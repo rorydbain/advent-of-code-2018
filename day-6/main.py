@@ -58,3 +58,18 @@ print(without_infinite)
 
 largest_area = max(without_infinite, key=without_infinite.get)
 print(largest_area, without_infinite[largest_area])
+
+
+p2_grid = np.zeros([grid_size, grid_size])
+for x in range(0, grid_size):
+	for y in range(0, grid_size):
+		
+		total = 0
+		for letter, coord in letters.items():
+			total += calculate_distance(coord[0], coord[1], x, y)
+			
+		if total < 10000:
+			p2_grid[x,y] = 1
+
+print("total", p2_grid.sum())
+		
