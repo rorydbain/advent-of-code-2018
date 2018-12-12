@@ -1,5 +1,6 @@
 from functools import reduce
 import re
+from string import ascii_uppercase
 
 with open('input.txt') as f:
 	content = f.readlines()
@@ -55,3 +56,10 @@ while options:
 
 print(''.join(visits))
 	
+# num_workers = 5	
+def time_taken_for_node(node):
+	if node not in ascii_uppercase:
+		return 0
+	return ascii_uppercase.index(node) + 61
+	
+
